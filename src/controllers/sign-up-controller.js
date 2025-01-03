@@ -55,15 +55,15 @@ class SignUpController {
         return res.status(422).json({ message: "Email já cadastrado." });
       }
 
-      const user = new User({
+      const newUser = new User({
         name,
         email,
         password: passwordHash,
       });
 
-      const newUser = await user.save();
+      const savedUser = await newUser.save();
 
-      const userToken = await createUserToken(newUser);
+      const userToken = await createUserToken(savedUser);
 
       res.cookie("token", userToken, {
         path: "/",
@@ -75,10 +75,11 @@ class SignUpController {
 
       res.status(201).json({
         message: "Usuário criado com sucesso!",
-        newUser,
+        newUser: savedUser,
       });
     } catch (error) {
       console.error(error);
+
       res.status(500).json({ message: "Erro interno de servidor." });
     }
   }
